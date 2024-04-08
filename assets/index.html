@@ -1,19 +1,88 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 
 <head>
-    <title>Lusiadas</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple Webpage</title>
+    <style>
+        body,
+        html {
+            height: 100%;
+            margin: 0;
+            color: black;
+            background-color: white;
+            font-family: Arial, sans-serif;
+
+            font-family: Iowan Old Style, Apple Garamond, Baskerville, Times New Roman, Droid Serif, Times, Source Serif Pro, serif, Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol;
+
+        }
+
+        .container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 90%;
+            text-align: center;
+            text-align: left;
+            font-size: clamp(10px, 5vw, 30px);
+        }
+
+        [contenteditable] {
+            outline: 0px solid transparent;
+        }
+
+
+        footer {
+            text-align: center;
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            height: 10%;
+            font-size: clamp(10px, 3vw, 20px);
+
+        }
+
+        @media (prefers-color-scheme: dark) {
+
+            html,
+            img,
+            video,
+            iframe {
+                filter: invert(1);
+            }
+        }
+    </style>
 </head>
 
 <body>
-    <button id="runTestButton">Run Test</button>
-    <div id="responseOutput"></div>
-
+    <div class="container">
+        <p class="editable" contenteditable="true" spellcheck="false">
+            As armas e os barões assinalados,<br>
+            Que da ocidental praia Lusitana,<br>
+            Por mares nunca de antes navegados,<br>
+            Passaram ainda além da Taprobana,<br>
+            Em perigos e guerras esforçados,<br>
+            Mais do que prometia a força humana,<br>
+            E entre gente remota edificaram<br>
+            Novo Reino, que tanto sublimaram;
+        </p>
+    </div>
+    <footer>
+        <p>Credits: Your Name</p>
+    </footer>
 
     <script>
-        const prompt = ``;
 
-        async function Test() {
+
+        const editableElement = document.querySelector('.editable');
+
+
+        async function Complete() {
+
+            const prompt = editableElement.innerText;
+
+            console.log(prompt);
 
             let response = await fetch("/completion", {
                 method: 'POST',
@@ -26,8 +95,7 @@
             });
 
             const reader = response.body.getReader();
-            const responseOutput = document.getElementById('responseOutput');
-            responseOutput.innerText = ""
+
             let stop = false;
             while (!stop) {
                 const {done, value} = await reader.read();
@@ -40,7 +108,7 @@
                         try {
                             const toParse = message.substring(dataPrefix.length);
                             const jsonData = JSON.parse(toParse);
-                            responseOutput.innerText += jsonData.text;
+                            editableElement.innerText += jsonData.text;
                             if (jsonData.finish_reason) {
                                 stop = true;
                             }
@@ -53,7 +121,15 @@
 
         }
 
-        document.getElementById('runTestButton').addEventListener('click', Test);
+        document.addEventListener('DOMContentLoaded', (event) => {
+
+            editableElement.addEventListener('keypress', function (e) {
+                if (e.key === 'Enter') {
+                    e.preventDefault(); // Prevents the default action of the Enter key
+                    Complete()
+                }
+            });
+        });
     </script>
 </body>
 
