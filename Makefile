@@ -42,7 +42,7 @@ build:
 
 ## Prepare data
 run:
-	litestar run --port 8000
+	uvicorn app:app --reload
 
 #################################################################################
 # Self Documenting Commands                                                     #
