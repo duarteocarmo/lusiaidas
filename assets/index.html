@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Lusiadas</title>
+</head>
+
+<body>
+    <button id="runTestButton">Run Test</button>
+    <div id="responseOutput"></div>
+
+
+    <script>
+        const prompt = ``;
+
+        async function Test() {
+
+            let response = await fetch("/completion", {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    prompt,
+                })
+            });
+
+            const reader = response.body.getReader();
+            const responseOutput = document.getElementById('responseOutput');
+            responseOutput.innerText = ""
+            let stop = false;
+            while (!stop) {
+                const {done, value} = await reader.read();
+                if (done) break;
+                let chunk = new TextDecoder().decode(value);
+                const dataPrefix = "data: ";
+                let jsonMessages = chunk.split('\n');
+                for (let message of jsonMessages) {
+                    if (message.startsWith(dataPrefix)) {
+                        try {
+                            const toParse = message.substring(dataPrefix.length);
+                            const jsonData = JSON.parse(toParse);
+                            responseOutput.innerText += jsonData.text;
+                            if (jsonData.finish_reason) {
+                                stop = true;
+                            }
+                        } catch (error) {
+                            console.log(`Error for ${message}: ${error}`)
+                        }
+                    }
+                }
+            }
+
+        }
+
+        document.getElementById('runTestButton').addEventListener('click', Test);
+    </script>
+</body>
+
+</html>

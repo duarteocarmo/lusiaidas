@@ -1,0 +1,14 @@
+[project]
+name = "lusiaidas"
+dependencies = [
+  "fastapi",
+  "llama-cpp-python",
+  "huggingface-hub",
+  "uvicorn[standard]",
+]
+description = ""
+version = "24.4.7"
+optional-dependencies.dev = ["ruff"]
+
+[tool.setuptools]
+py-modules = []
