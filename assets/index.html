@@ -80,9 +80,9 @@
 
         async function Complete() {
 
-            const prompt = editableElement.innerText;
+            const prompt = editableElement.innerText.trim();
+            editableElement.innerText = editableElement.innerText.trim()
 
-            console.log(prompt);
 
             let response = await fetch("/completion", {
                 method: 'POST',
@@ -121,9 +121,10 @@
 
         }
 
+
         document.addEventListener('DOMContentLoaded', (event) => {
 
-            editableElement.addEventListener('keypress', function (e) {
+            editableElement.addEventListener('keydown', function (e) {
                 if (e.key === 'Enter') {
                     e.preventDefault(); // Prevents the default action of the Enter key
                     Complete()

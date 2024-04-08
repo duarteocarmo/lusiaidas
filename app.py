@@ -23,6 +23,11 @@ Escreve uma estrofe ao estilo de Os Lusíadas
 ### Response:
 {}"""
 
+test = "As coisas que eu gostava"
+
+# GENERATION_CONFIG.pop("stream")
+# print(LLM(**GENERATION_CONFIG, prompt=PROMPT_PREFIX.format(test)))
+
 
 class Prompt(BaseModel):
     prompt: str
@@ -33,10 +38,13 @@ app = FastAPI()
 
 def generate_completion(prompt: str):
     print("Generating...")
+    completion = ""
     for item in LLM(**GENERATION_CONFIG, prompt=PROMPT_PREFIX.format(prompt)):
         choice = item["choices"][0]  # type: ignore
+        completion += choice["text"]
         yield "data: {}\n\n".format(json.dumps(choice))
-    print("Done")
+
+    print(prompt + completion)
 
 
 @app.post("/completion")
