@@ -33,6 +33,7 @@ idna==3.6
 jinja2==3.1.3
     # via llama-cpp-python
 llama-cpp-python==0.2.60
+loguru==0.7.2
 markupsafe==2.1.5
     # via jinja2
 numpy==1.26.4

@@ -1,0 +1,7 @@
+version: "3.9"
+
+services:
+  lusiaidas:
+    build: . 
+    ports:
+      - "4444:8000"

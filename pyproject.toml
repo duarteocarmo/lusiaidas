@@ -5,6 +5,7 @@ dependencies = [
   "llama-cpp-python",
   "huggingface-hub",
   "uvicorn[standard]",
+  "loguru",
 ]
 description = ""
 version = "24.4.7"

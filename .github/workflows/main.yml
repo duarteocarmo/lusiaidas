@@ -1,0 +1,39 @@
+name: Deploy master
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v2
+
+      - name: copy directory to server
+        uses: appleboy/scp-action@master
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          password: ${{ secrets.PASSWORD }}
+          port: 22
+          overwrite: true
+          source: "."
+          target: "/root/projects/lusiaidas"
+
+      - name: start docker container as deamon
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          password: ${{ secrets.PASSWORD }}
+          port: 22
+          script: |
+            env
+            cd projects/lusiaidas  
+            docker compose down
+            docker compose rm -f
+            docker compose build --no-cache
+            docker compose up -d
+            docker ps

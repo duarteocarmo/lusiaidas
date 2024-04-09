@@ -4,7 +4,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Simple Webpage</title>
+    <title>Lusiaidas</title>
+    <link rel="icon"
+        href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⚓</text></svg>">
     <style>
         body,
         html {
@@ -18,6 +20,11 @@
 
         }
 
+        a {
+            text-decoration: underline;
+            color: black;
+        }
+
         .container {
             display: flex;
             justify-content: center;
@@ -26,6 +33,7 @@
             text-align: center;
             text-align: left;
             font-size: clamp(10px, 5vw, 30px);
+            caret-color: red;
         }
 
         [contenteditable] {
@@ -38,8 +46,8 @@
             position: absolute;
             bottom: 0;
             width: 100%;
-            height: 10%;
-            font-size: clamp(10px, 3vw, 20px);
+            height: 15%;
+            font-size: clamp(12px, 2vw, 20px);
 
         }
 
@@ -58,18 +66,20 @@
 <body>
     <div class="container">
         <p class="editable" contenteditable="true" spellcheck="false">
-            As armas e os barões assinalados,<br>
-            Que da ocidental praia Lusitana,<br>
-            Por mares nunca de antes navegados,<br>
-            Passaram ainda além da Taprobana,<br>
-            Em perigos e guerras esforçados,<br>
-            Mais do que prometia a força humana,<br>
-            E entre gente remota edificaram<br>
-            Novo Reino, que tanto sublimaram;
+            Quando treinei o meu modelo, <br>
+            A máquina começou a falar&nbsp
         </p>
     </div>
     <footer>
-        <p>Credits: Your Name</p>
+        <p>LusiAIdas, a Gemma 2B fine-tune on <i><a target="_blank"
+                    href="https://en.wikipedia.org/wiki/Os_Lus%C3%ADadas">the portuguese classic</a></i></p>
+        <p>A dumb experiment by <a target="_blank" href="https://duarteocarmo.com">Duarte O.Carmo</a>, here's the <a
+                href="https://huggingface.co/duarteocarmo/lusiaidas-v0.1/blob/main/README.md" target="_blank">model</a>,
+            and the <a href="https://github.com/duarteocarmo/lusiaidas/blob/master/training/train.ipynb"
+                target="_blank">code</a>.
+        </p>
+    </footer>
+
     </footer>
 
     <script>
@@ -78,11 +88,35 @@
         const editableElement = document.querySelector('.editable');
 
 
+        function setEndOfContenteditable(contentEditableElement) {
+            var range, selection;
+            if (document.createRange)//Firefox, Chrome, Opera, Safari, IE 9+
+            {
+                range = document.createRange();//Create a range (a range is a like the selection but invisible)
+                range.selectNodeContents(contentEditableElement);//Select the entire contents of the element with the range
+                range.collapse(false);//collapse the range to the end point. false means collapse to end rather than the start
+                selection = window.getSelection();//get the selection object (allows you to change selection)
+                selection.removeAllRanges();//remove any selections already made
+                selection.addRange(range);//make the range you have just created the visible selection
+            }
+            else if (document.selection)//IE 8 and lower
+            {
+                range = document.body.createTextRange();//Create a range (a range is a like the selection but invisible)
+                range.moveToElementText(contentEditableElement);//Select the entire contents of the element with the range
+                range.collapse(false);//collapse the range to the end point. false means collapse to end rather than the start
+                range.select();//Select the range (make it the visible selection
+            }
+        }
+
+
+        editableElement.focus()
+        setEndOfContenteditable(editableElement)
+
         async function Complete() {
 
             const prompt = editableElement.innerText.trim();
             editableElement.innerText = editableElement.innerText.trim()
-
+            setEndOfContenteditable(editableElement);
 
             let response = await fetch("/completion", {
                 method: 'POST',
@@ -109,6 +143,7 @@
                             const toParse = message.substring(dataPrefix.length);
                             const jsonData = JSON.parse(toParse);
                             editableElement.innerText += jsonData.text;
+                            setEndOfContenteditable(editableElement);
                             if (jsonData.finish_reason) {
                                 stop = true;
                             }
