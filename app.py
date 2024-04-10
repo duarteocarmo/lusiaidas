@@ -1,11 +1,8 @@
 from fastapi import FastAPI, HTTPException
-from fastapi.background import BackgroundTasks
 from fastapi.responses import HTMLResponse, StreamingResponse
 from loguru import logger
 from llama_cpp import Llama
 from pydantic import BaseModel
-import time
-import typing as t
 import pathlib
 import json
 
@@ -26,34 +23,14 @@ Escreve uma estrofe ao estilo de Os Lusíadas
 
 ### Response:
 {}"""
+LLM = Llama.from_pretrained(repo_id=REPO_ID, filename="*.gguf", verbose=True)
 
 
 class Prompt(BaseModel):
     prompt: str
 
 
-class LLMCache:
-    def __init__(self):
-        self.llm: t.Optional[Llama] = None
-
-    def load_model(self) -> Llama:
-        logger.info("Loading model")
-        if not self.llm:
-            self.llm = Llama.from_pretrained(
-                repo_id=REPO_ID, filename="*.gguf", verbose=True
-            )
-        return self.llm
-
-    def unload_model(self):
-        logger.info("Sleeping for 60 seconds")
-        time.sleep(CACHE_TIME_SECONDS)
-        if self.llm:
-            self.llm = None
-        logger.info("Model unloaded")
-
-
 app = FastAPI()
-llm_cache = LLMCache()
 
 
 def generate_completion(prompt: str, model: Llama):
@@ -68,14 +45,11 @@ def generate_completion(prompt: str, model: Llama):
 
 
 @app.post("/completion")
-def completion(prompt: Prompt, background_tasks: BackgroundTasks):
+def completion(prompt: Prompt):
     if not prompt:
         raise HTTPException(status_code=400, detail="Prompt is required")
 
-    model = llm_cache.load_model()
-    background_tasks.add_task(llm_cache.unload_model)
-
-    return StreamingResponse(generate_completion(prompt.prompt, model=model))
+    return StreamingResponse(generate_completion(prompt.prompt, model=LLM))
 
 
 @app.get("/", response_class=HTMLResponse)
