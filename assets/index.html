@@ -60,6 +60,24 @@
                 filter: invert(1);
             }
         }
+
+        .tooltip {
+            position: absolute;
+            font-size: 12px;
+            color: #999;
+            background-color: #f9f9f9;
+            padding: 5px;
+            border-radius: 4px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            opacity: 0;
+            transition: opacity 0.3s;
+            pointer-events: none;
+            /* Allow clicks to pass through */
+        }
+
+        .editable:focus+.tooltip {
+            opacity: 1;
+        }
     </style>
 </head>
 
@@ -69,12 +87,14 @@
             Quando treinei o meu modelo, <br>
             A máquina começou a falar&nbsp
         </p>
+        <span class="tooltip">Start typing and hit Enter...</span>
     </div>
     <footer>
         <p>LusiAIdas, a Gemma 2B fine-tune on <i><a target="_blank"
                     href="https://en.wikipedia.org/wiki/Os_Lus%C3%ADadas">the portuguese classic</a></i></p>
+
         <p>A dumb experiment by <a target="_blank" href="https://duarteocarmo.com">Duarte O.Carmo</a>, here's the <a
-                href="https://huggingface.co/duarteocarmo/lusiaidas-v0.1/blob/main/README.md" target="_blank">model</a>,
+                href="https://huggingface.co/duarteocarmo/lusiaidas-v0.1" target="_blank">model</a>,
             and the <a href="https://github.com/duarteocarmo/lusiaidas/blob/master/training/train.ipynb"
                 target="_blank">code</a>.
         </p>
@@ -83,7 +103,6 @@
     </footer>
 
     <script>
-
 
         const editableElement = document.querySelector('.editable');
 
@@ -111,6 +130,7 @@
 
         editableElement.focus()
         setEndOfContenteditable(editableElement)
+        editableElement.focus()
 
         async function Complete() {
 
@@ -165,6 +185,17 @@
                     Complete()
                 }
             });
+        });
+
+
+        window.addEventListener('DOMContentLoaded', () => {
+            const tooltip = document.querySelector('.tooltip');
+
+            tooltip.style.opacity = '1';
+
+            setTimeout(() => {
+                tooltip.style.opacity = '0';
+            }, 3000);
         });
     </script>
 </body>
