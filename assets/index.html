@@ -61,6 +61,7 @@
             }
         }
 
+
         .tooltip {
             position: absolute;
             font-size: 12px;
@@ -72,7 +73,6 @@
             opacity: 0;
             transition: opacity 0.3s;
             pointer-events: none;
-            /* Allow clicks to pass through */
         }
 
         .editable:focus+.tooltip {
@@ -105,6 +105,7 @@
     <script>
 
         const editableElement = document.querySelector('.editable');
+        const tooltip = document.querySelector('.tooltip');
 
 
         function setEndOfContenteditable(contentEditableElement) {
@@ -185,18 +186,23 @@
                     Complete()
                 }
             });
+
+            editableElement.addEventListener('focus', () => {
+                tooltip.style.opacity = '0'; // Hide the tooltip when the editable element is focused
+            });
+
+            editableElement.addEventListener('blur', () => {
+                tooltip.style.opacity = '1'; // Show the tooltip when the editable element loses focus
+            });
         });
-
-
         window.addEventListener('DOMContentLoaded', () => {
-            const tooltip = document.querySelector('.tooltip');
-
-            tooltip.style.opacity = '1';
+            tooltip.style.opacity = '1'; // Show the tooltip initially
 
             setTimeout(() => {
-                tooltip.style.opacity = '0';
-            }, 3000);
+                tooltip.style.opacity = '0'; // Hide the tooltip after 3 seconds
+            }, 2000);
         });
+
     </script>
 </body>
 
