@@ -13,7 +13,7 @@ from threading import Lock, Timer
 from pydantic import BaseModel
 
 REPO_ID = "duarteocarmo/lusiaidas-v0.1-q4_k_m"
-CACHE_TIME_SECONDS = 60 * 60
+CACHE_TIME_SECONDS = 60 * 60 # 1 hour
 GENERATION_CONFIG = {
     "max_tokens": 400,
     "temperature": 0.2,
