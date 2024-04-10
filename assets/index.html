@@ -70,24 +70,21 @@
             padding: 5px;
             border-radius: 4px;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-            opacity: 0;
+            opacity: 1;
             transition: opacity 0.3s;
             pointer-events: none;
-        }
 
-        .editable:focus+.tooltip {
-            opacity: 1;
         }
     </style>
 </head>
 
 <body>
     <div class="container">
+        <span class="tooltip">Start typing and hit Enter...</span>
         <p class="editable" contenteditable="true" spellcheck="false">
             Quando treinei o meu modelo, <br>
             A máquina começou a falar&nbsp
         </p>
-        <span class="tooltip">Start typing and hit Enter...</span>
     </div>
     <footer>
         <p>LusiAIdas, a Gemma 2B fine-tune on <i><a target="_blank"
@@ -187,20 +184,16 @@
                 }
             });
 
-            editableElement.addEventListener('focus', () => {
-                tooltip.style.opacity = '0'; // Hide the tooltip when the editable element is focused
-            });
-
-            editableElement.addEventListener('blur', () => {
-                tooltip.style.opacity = '1'; // Show the tooltip when the editable element loses focus
-            });
-        });
-        window.addEventListener('DOMContentLoaded', () => {
-            tooltip.style.opacity = '1'; // Show the tooltip initially
-
             setTimeout(() => {
-                tooltip.style.opacity = '0'; // Hide the tooltip after 3 seconds
-            }, 2000);
+                tooltip.style.opacity = '0';
+                tooltip.style.transition = 'opacity 0.5s ease-in-out';
+                setTimeout(() => {
+                    tooltip.style.display = 'none';
+                }, 500);
+            }, 1500);
+
+
+
         });
 
     </script>
